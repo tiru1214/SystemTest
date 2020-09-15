@@ -1,5 +1,6 @@
 ﻿
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -13,13 +14,6 @@ namespace SystemTest.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
-        {
-            ViewBag.Title = "Home Page";
-
-            return View();
-        }
-
         public ActionResult Login()
         {
             return View();
@@ -28,13 +22,13 @@ namespace SystemTest.Controllers
         [HttpPost]
         public ActionResult LoginVerify(LoginDetails LD)
         {
-
+            //Session["EmployeeList"] = GetEmployee();
             string ResponseString = "";
             HttpWebResponse response = null;
             try
             {
                 var request = (HttpWebRequest)WebRequest.Create("http://localhost:4758//api/Employee/Verify");
-                request.Accept = "application/json"; 
+                request.Accept = "application/json";
                 request.Method = "POST";
                 JavaScriptSerializer jss = new JavaScriptSerializer();
                 var myContent = jss.Serialize(LD);
@@ -48,25 +42,23 @@ namespace SystemTest.Controllers
                 response = (HttpWebResponse)request.GetResponse();
                 ResponseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
                 Employee obj = JsonConvert.DeserializeObject<Employee>(ResponseString);
-                
-                return RedirectToAction("Userinfo", obj);
-            }
-            catch (WebException ex)
-            {
-                if (ex.Status == WebExceptionStatus.ProtocolError)
+                if (obj == null)
                 {
-                    response = (HttpWebResponse)ex.Response;
-                    ResponseString = "Some error occured: " + response.StatusCode.ToString();
+                    ViewBag.Error = "Username/Password mismated";
+                    return View("Login");
                 }
                 else
                 {
-                    ResponseString = "Some error occured: " + ex.Status.ToString();
+                    return RedirectToAction("Userinfo", obj);
                 }
+
+            }
+            catch (WebException ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View("Login");
             }
 
-
-
-            return View();
         }
 
         public ActionResult Userinfo(Employee emp)
@@ -103,25 +95,49 @@ namespace SystemTest.Controllers
 
                 ResponseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
                 Employee obj = JsonConvert.DeserializeObject<Employee>(ResponseString);
-                return RedirectToAction("Userinfo", obj);
-            }
-            catch (WebException ex)
-            {
-                if (ex.Status == WebExceptionStatus.ProtocolError)
+                if (obj == null)
                 {
-                    response = (HttpWebResponse)ex.Response;
-                    ResponseString = "Some error occured: " + response.StatusCode.ToString();
+                    return RedirectToAction("Login");
                 }
                 else
                 {
-                    ResponseString = "Some error occured: " + ex.Status.ToString();
+                    return RedirectToAction("Userinfo", obj);
                 }
+
             }
-            return View();
+            catch (WebException ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View("Login");
+            }
+
         }
+
+        //public IEnumerable<Employee> GetEmployee()
+        //{
+           
+        //    IEnumerable<Employee> employee = null;
+
+        //    using (var client = new HttpClient())
+        //    {
+        //        client.BaseAddress = new Uri("http://localhost:4758//api/");
+        //        //HTTP GET
+        //        var responseTask = client.GetAsync("Employee/GetEmployeeList");
+        //        responseTask.Wait();
+        //        var result = responseTask.Result;
+        //        if (result.IsSuccessStatusCode)
+        //        {
+        //            var readTask = result.Content.ReadAsAsync<IList<Employee>>();
+        //            readTask.Wait();
+        //            employee = readTask.Result;
+                 
+        //        }
+        //        return employee;
+        //    }
+        //}
+
+
+
     }
-
-
- 
 }
 

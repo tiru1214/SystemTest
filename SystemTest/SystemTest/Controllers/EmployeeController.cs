@@ -14,18 +14,11 @@ namespace SystemTest.Controllers
     public class EmployeeController : ApiController
     {
         
-        List<Employee> global = new List<Employee>();
+        
 
         public HttpResponseMessage Verify(LoginDetails ld)
         {
-            
-            if (global.Count == 0)
-            {
-                global = new List<Employee>();
-                global = GetEmployeeList();
-            }
-            
-            Employee e = global.Find(x=> x.username==ld.username && x.password==ld.password);
+            Employee e = GetEmployeeList().Find(x=> x.username==ld.username && x.password==ld.password);
             return Request.CreateResponse(HttpStatusCode.OK, e);
         }
 
@@ -43,20 +36,13 @@ namespace SystemTest.Controllers
 
         public HttpResponseMessage SaveEmployeeInfo(Employee emp)
         {
-
-            Employee e = global.Find(x => x.id == emp.id);
-
-            foreach(Employee e1 in global)
-            {
-                if (e1.id == emp.id)
-                {
-                    global[e.id].username = e.username;
-                    global[e.id].password = e.password;
-                    global[e.id].City = e.City;
-                    global[e.id].phoneno = e.phoneno;
-
-                }
-            }
+            List<Employee> le = GetEmployeeList();
+            Employee e = GetEmployeeList().Find(x => x.id == emp.id);
+            e.username = emp.username;
+            e.password = emp.password;
+            e.phoneno = emp.phoneno;
+            e.City = emp.City;
+            
 
             return Request.CreateResponse(HttpStatusCode.OK, e);
         }
