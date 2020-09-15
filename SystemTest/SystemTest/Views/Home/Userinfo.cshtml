@@ -1,0 +1,57 @@
+﻿@model SystemTest.Models.Employee
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    
+    <title>Userinfo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="~/Content/Site.css" rel="stylesheet" />
+</head>
+<body>
+    @using (Html.BeginForm("SaveInfo", "Home", FormMethod.Post))
+    {
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4"></div>
+                <div class="col-lg-4">
+                    <table>
+                        <tr>
+                            <td><h3>UserId:</h3></td>
+                            <td>@Html.TextBoxFor(m => m.id, new { @class = "form-control", @readonly = "readonly" })</td>
+                        </tr>
+                        <tr>
+                            <td><h3>username:</h3></td>
+                            <td>@Html.TextBoxFor(m => m.username, new { @class = "form-control" })</td>
+                        </tr>
+                        <tr>
+                            <td><h3>password:</h3></td>
+                            <td>@Html.TextBoxFor(m => m.password, new { @class = "form-control" })</td>
+                        </tr>
+                        <tr>
+                            <td><h3>City:</h3></td>
+                            <td>@Html.TextBoxFor(m => m.City, new { @class = "form-control" })</td>
+                        </tr>
+                        <tr>
+                            <td><h3>phonenumber:</h3></td>
+                            <td>@Html.TextBoxFor(m => m.phoneno)</td>
+                        </tr>
+                        <tr>
+                            <td><button type="submit" style="width:100px;">Update</button></td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div class="col-lg-4"></div>
+            </div>
+            
+        </div>
+    }
+    
+</body>
+</html>
